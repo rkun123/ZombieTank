@@ -8,7 +8,7 @@ public class ZonbieSponer : MonoBehaviour {
 	void Start () {
 		for(int i=0;i < 20; i++)
         {
-            //Instantiate(zombie_prefab, new Vector3(Random.Range(-200,200), Random.Range(-200, 200), 60));
+            Instantiate(zombie_prefab, new Vector3(Random.Range(0, 250), 100, Random.Range(0, 250)), Quaternion.identity);
         }
 	}
 	

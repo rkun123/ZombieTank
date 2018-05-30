@@ -7,9 +7,12 @@ public class PlayerScript : MonoBehaviour {
     public GameObject tank;
     public GameObject shooter;
     public GameObject bullet_prefab;
-    public float forwardSpeed = 0.1f;
-    public float reverseSpeed = 0.1f;
-    public float turnSpeed = 1.0f;
+    public float vertTurnSpeed = 3.0f;
+    public float forwardSpeed = 3.0f;
+    public float reverseSpeed = 1.0f;
+    public float turnSpeed = 3.0f;
+    public float upperLimit = 290.0f;
+    public float lowerLimit = 30.0f;
     Component rb;
     
     //for shot
@@ -27,6 +30,8 @@ public class PlayerScript : MonoBehaviour {
         rb = GetComponent("RigidBody");
         Rigidbody tank_rb = tank.GetComponent<Rigidbody>();
         tank_rb.centerOfMass = -Vector3.up;
+        //Visible Pointer
+        Cursor.visible = false;
     }
 	
 	// Update is called once per frame
@@ -35,26 +40,33 @@ public class PlayerScript : MonoBehaviour {
         {
             Shot();
         }
+        //for intterpt escape
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Cursor.visible = true;
+        }
 
-        //Debug.Log("Mouse:" + Input.mousePosition.x + " Width:" + Screen.width+ " mouse(getaxis):"+Input.GetAxis("Mouse X") + " rotation: " + ((mousePosX - latestMousePosX) * MOUSE_GAIN + tankRotX));
         transform.Rotate(0, 0, Input.GetAxis("Mouse X") * MOUSE_GAIN);
-        //Debug.Log(Input.GetAxis("Mouse X"));
-        Debug.Log(Input.GetAxis("Mouse X"));
-        shooter.transform.Rotate(Input.GetAxis("Mouse Y"), 0, 0);
+        shooter.transform.Rotate(Input.GetAxis("Mouse Y")*vertTurnSpeed*Time.deltaTime, 0, 0);
+        Debug.Log(shooter.transform.rotation.x);
+        /*if (shooter.transform.rotation.x < -0.75f)
+        {
+            shooter.transform.rotation = new Quaternion(-0.75f ,shooter.transform.rotation.y, shooter.transform.rotation.z, shooter.transform.rotation.w);
+        }*/
 
         bool isReversing = false;
         //forward
         if (Input.GetKey(KeyCode.W))
         {
             //tank.transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3( 0, 0, forwardSpeed),Time.deltaTime);
-            tank.transform.Translate(new Vector3(0,0,forwardSpeed));
+            tank.transform.Translate(new Vector3(0,0,forwardSpeed)*Time.deltaTime);
             isReversing = false;
         }
         //reverse
         if (Input.GetKey(KeyCode.S))
         {
             //tank.transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3( 0, 0, forwardSpeed),Time.deltaTime);
-            tank.transform.Translate(new Vector3(0, 0, -reverseSpeed));
+            tank.transform.Translate(new Vector3(0, 0, -reverseSpeed)*Time.deltaTime);
             isReversing = true;
         }
         //left turn
@@ -63,11 +75,11 @@ public class PlayerScript : MonoBehaviour {
             //tank.transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3( 0, 0, forwardSpeed),Time.deltaTime);
             if (isReversing)
             {
-                tank.transform.Rotate(new Vector3(0, turnSpeed, 0));
+                tank.transform.Rotate(new Vector3(0, turnSpeed * Time.deltaTime, 0));
             }
             else
             {
-                tank.transform.Rotate(new Vector3(0, -turnSpeed, 0));
+                tank.transform.Rotate(new Vector3(0, -turnSpeed * Time.deltaTime, 0));
             }
         }
         //right turn
@@ -76,11 +88,11 @@ public class PlayerScript : MonoBehaviour {
             //tank.transform.position = Vector3.Lerp(transform.position, transform.position + new Vector3( 0, 0, forwardSpeed),Time.deltaTime);
             if (isReversing)
             {
-                tank.transform.Rotate(new Vector3(0, -turnSpeed, 0));
+                tank.transform.Rotate(new Vector3(0, -turnSpeed * Time.deltaTime, 0));
             }
             else
             {
-                tank.transform.Rotate(new Vector3(0, turnSpeed, 0));
+                tank.transform.Rotate(new Vector3(0, turnSpeed * Time.deltaTime, 0));
             }
             
         }
